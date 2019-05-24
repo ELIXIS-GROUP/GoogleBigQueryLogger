@@ -1,5 +1,8 @@
 vendor
 config/google_client_credentials.json
-config/googleBigQueryLogger.ini
 composer.lock
 .DS_Store
+.php_cs.cache
+index.php
+.env
+.env.test
