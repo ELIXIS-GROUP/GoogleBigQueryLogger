@@ -19,10 +19,12 @@
         "php": ">=7.1",
         "monolog/monolog": "^1.24",
         "google/cloud-bigquery": "^1.6",
-        "doctrine/orm": "^2.6",
-        "friendsofphp/php-cs-fixer": "^2.15"
+        "doctrine/orm": "^2.6"
     },
     "autoload": {
         "psr-4": {"GoogleBigQueryLogger\\": "src/"}
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.15"
     }
 }
