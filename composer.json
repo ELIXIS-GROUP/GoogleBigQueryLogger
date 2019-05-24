@@ -1,0 +1,27 @@
+{
+    "name": "elixis/google-big-query-logger",
+    "description": "Monolog handler to write and read log message to Google Big Query",
+    "readme" : "/readme.md",
+    "version" : "1.0.0-dev",
+    "time" : "2019-05-23",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Anthony Papillaud",
+            "email": "apapillaud@elixis.com"
+        }
+    ],
+    "support": {
+        "email": "support@elixis.com"
+    },
+    "license": "MIT",
+    "require": {
+        "php": ">=7.1",
+        "monolog/monolog": "^1.24",
+        "google/cloud-bigquery": "^1.6",
+        "doctrine/orm": "^2.6"
+    },
+    "autoload": {
+        "psr-4": {"GoogleBigQueryLogger\\": "src/"}
+    }
+}
