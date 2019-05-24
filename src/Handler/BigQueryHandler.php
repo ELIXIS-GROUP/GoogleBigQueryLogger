@@ -85,7 +85,9 @@ class BigQueryHandler extends AbstractProcessingHandler
         $record['context'] = $formatedContent['recordContext'];
         $loggerEntity = $formatedContent['loggerEntity'];
 
-        if (!in_array($_ENV['APP_ENV'], $_ENV['EXCLUDE_ENV'])) {
+        $excludeEnv = $this->_bigQueryTable->listExcludeEnv($_ENV['EXCLUDE_ENV']);
+
+        if (!in_array($_ENV['APP_ENV'], $excludeEnv)) {
             $this->_bigQueryQueryBuilder->setReaderEntity($classEntity);
             $this->_bigQueryQueryBuilder->insert($this->_bigQueryTable->getDatasetTable())
                                         ->values([(array) $loggerEntity])
@@ -93,7 +95,7 @@ class BigQueryHandler extends AbstractProcessingHandler
                                         ->execute();
         }
 
-        if (true == $_ENV['SHOW_RESULTS'] || in_array($_ENV['APP_ENV'], $_ENV['EXCLUDE_ENV'])) {
+        if (true == $_ENV['SHOW_RESULTS'] || in_array($_ENV['APP_ENV'], $excludeEnv)) {
             $lines = preg_split('{[\r\n]+}', rtrim((string) $record['formatted']));
             foreach ($lines as $line) {
                 error_log($line, 4);

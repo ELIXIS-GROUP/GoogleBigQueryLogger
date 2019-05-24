@@ -41,9 +41,7 @@ class BigQueryLogger
     public function __construct()
     {
         $dotenv = new Dotenv();
-        $dotenv->loadEnv($_SERVER['DOCUMENT_ROOT'].'/.env');
-
-        $this->_setExcludeEnv($_ENV['EXCLUDE_ENV']);
+        $dotenv->loadEnv(dirname(__DIR__).'/.env');
 
         if (is_null($_ENV['DATASET'])) {
             throw new \Exception('Configuration error, for this project. a "dataset" name is required. Add dataset=acme in ini file', 1);
@@ -99,17 +97,20 @@ class BigQueryLogger
     }
 
     /**
-     * Set env variable EXCLUDE_ENV with an array containted the environment list to exclude.
+     * List exclude environment in array.
      *
      * @since 1.0.1
      * @version 1.0.1
      * @return string
-     * @param  String $excludeEnv
+     * @param  string $excludeEnv
      **/
-    private function _setExcludeEnv(string $excludeEnv): array
+    public function listExcludeEnv(string $excludeEnv): array
     {
         $excludeEnv = preg_replace('/[[\] ]+/', '', $excludeEnv);
-        $envList = explode(',', $excludeEnv);
-        $_ENV['EXCLUDE_ENV'] = $envList;
+        $envList = ($excludeEnv !== "")? explode(',', $excludeEnv) : [];
+
+        return $envList;
+
     }
+
 }
