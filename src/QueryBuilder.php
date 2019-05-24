@@ -21,10 +21,10 @@ use GoogleBigQueryLogger\Annotation\BigQueryReader as BigQueryReader;
  * @method __construct()
  * @method setReaderEntity()
  * @method add()             QueryBuilder
- * @method setMaxResults()   Integer
- * @method getMaxResults()   Integer
- * @method setFirstResult()  Integer
- * @method getFirstResult()  Integer
+ * @method setMaxResults()   int
+ * @method getMaxResults()   int
+ * @method setFirstResult()  int
+ * @method getFirstResult()  int
  * @method select()          QueryBuilder
  * @method insert()          QueryBuilder
  * @method update()          QueryBuilder
@@ -38,7 +38,7 @@ use GoogleBigQueryLogger\Annotation\BigQueryReader as BigQueryReader;
  * @method execute()
  *
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.0.1
  **/
 class QueryBuilder
 {
@@ -170,7 +170,7 @@ class QueryBuilder
      * @since 1.0.0
      * @version 1.0.0
      **/
-    public function setMaxResults(Integer $maxResults): ?Integer
+    public function setMaxResults(int $maxResults): ?int
     {
         $this->_maxResults = $maxResults;
 
@@ -185,7 +185,7 @@ class QueryBuilder
      * @since 1.0.0
      * @version 1.0.0
      **/
-    public function getMaxResults(): ?Integer
+    public function getMaxResults(): ?int
     {
         return $this->_maxResults;
     }
@@ -193,13 +193,12 @@ class QueryBuilder
     /**
      * Set query first result.
      *
-     * @param  int     $maxResults
      * @param  Integer $firstResult
      * @return int
      * @since 1.0.0
      * @version 1.0.0
      **/
-    public function setFirstResult(Integer $firstResult): ?Integer
+    public function setFirstResult(int $firstResult): ?int
     {
         $this->_firstResult = $firstResult;
 
@@ -209,12 +208,11 @@ class QueryBuilder
     /**
      * Set query first result.
      *
-     * @param  int $maxResults
      * @return int
      * @since 1.0.0
      * @version 1.0.0
      **/
-    public function getFirstResult(): ?Integer
+    public function getFirstResult(): ?int
     {
         return $this->_firstResult;
     }
@@ -486,10 +484,11 @@ class QueryBuilder
 
     /**
      * Converts this instance into an SELECT string in SQL.
+     * @todo try and debug script - Line 501 - if ($this->_isLimitQuery()) {}
      *
      * @return string
      * @since 1.0.0
-     * @version 1.0.0
+     * @version 1.0.1
      **/
     private function _getSQLForSelect(): string
     {
@@ -499,13 +498,15 @@ class QueryBuilder
             .(0 !== count($this->sqlParts['groupBy']) ? ' GROUP BY '.implode(', ', $this->sqlParts['groupBy']) : '')
             .(null !== $this->sqlParts['orderBy'] ? ' ORDER BY '.((string) $this->sqlParts['orderBy']) : '');
 
+        /*
         if ($this->_isLimitQuery()) {
             return $this->connection->getDatabasePlatform()->modifyLimitQuery(
                 $query,
-                $this->maxResults,
+                $this->getMaxResults(),
                 $this->firstResult
             );
         }
+        */
 
         return $query;
     }
@@ -515,7 +516,7 @@ class QueryBuilder
      *
      * @return \Google\Cloud\Core\Iterator\ItemIterator
      * @since 1.0.0
-     * @version 1.0.0
+     * @version 1.0.1
      **/
     public function execute()
     {
@@ -537,7 +538,7 @@ class QueryBuilder
         if ($queryResults->isComplete()) {
             return $queryResults->rows();
         } else {
-            throw new Exception('The query failed to complete');
+            throw new \Exception('The query failed to complete');
         }
     }
 }
