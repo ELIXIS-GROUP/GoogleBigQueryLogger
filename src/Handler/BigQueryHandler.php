@@ -25,7 +25,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
  * @method __construct()
  *
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.0.1
  **/
 class BigQueryHandler extends AbstractProcessingHandler
 {
@@ -67,16 +67,10 @@ class BigQueryHandler extends AbstractProcessingHandler
      * @todo try catch for method parse_ini_file
      * @param array $record
      * @since 1.0.0
-     * @version 1.0.0
+     * @version 1.0.1
      **/
     protected function write(array $record): void
     {
-        $dataConfig = parse_ini_file(dirname(dirname(__DIR__)).'/config/googleBigQueryLogger.ini');
-
-        if (!$dataConfig) {
-            throw new \Exception('/config/googleBigQueryLogger.ini is not defined, please add config before run project', 1);
-        }
-
         $classEntity = $this->_bigQueryTable->getEntity();
         $loggerEntity = new $classEntity();
 
@@ -91,7 +85,7 @@ class BigQueryHandler extends AbstractProcessingHandler
         $record['context'] = $formatedContent['recordContext'];
         $loggerEntity = $formatedContent['loggerEntity'];
 
-        if (!in_array($dataConfig['environment'], $dataConfig['exclude_environment'])) {
+        if (!in_array($_ENV['APP_ENV'], $_ENV['EXCLUDE_ENV'])) {
             $this->_bigQueryQueryBuilder->setReaderEntity($classEntity);
             $this->_bigQueryQueryBuilder->insert($this->_bigQueryTable->getDatasetTable())
                                         ->values([(array) $loggerEntity])
@@ -99,7 +93,7 @@ class BigQueryHandler extends AbstractProcessingHandler
                                         ->execute();
         }
 
-        if (true == $dataConfig['show_results'] || in_array($dataConfig['environment'], $dataConfig['exclude_environment'])) {
+        if (true == $_ENV['SHOW_RESULTS'] || in_array($_ENV['APP_ENV'], $_ENV['EXCLUDE_ENV'])) {
             $lines = preg_split('{[\r\n]+}', rtrim((string) $record['formatted']));
             foreach ($lines as $line) {
                 error_log($line, 4);

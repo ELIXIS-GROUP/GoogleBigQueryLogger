@@ -17,7 +17,7 @@ use GoogleBigQueryLogger\Annotation\Table as BigQueryTable;
  * BigQuery Reader annoation, use Doctrine annotation for read annotation in entity file.
  *
  * @author Anthony Papillaud <a.papillaud@elixis.com>
- * @version 1.0.1
+ * @version 1.0.0
  **/
 class BigQueryReader
 {
@@ -27,12 +27,12 @@ class BigQueryReader
     private $_reader;
 
     /**
-     * @var String $_annotationTable
+     * @var string $_annotationTable
      **/
     private $_annotationTable;
 
     /**
-     * @var String *_annotationColumn
+     * @var string *_annotationColumn
      **/
     private $_annotationColumn;
 

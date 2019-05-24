@@ -10,6 +10,7 @@
 namespace GoogleBigQueryLogger;
 
 use Google\Cloud\BigQuery\BigQueryClient;
+use Symfony\Component\Dotenv\Dotenv;
 
 /**
  * Initialize and use BigQuery API to create a new BigQuery Client.
@@ -39,24 +40,23 @@ class BigQueryLogger
 
     public function __construct()
     {
-        $dataConfig = parse_ini_file(dirname(__DIR__).'/config/googleBigQueryLogger.ini');
+        $dotenv = new Dotenv();
+        $dotenv->loadEnv($_SERVER['DOCUMENT_ROOT'].'/.env');
 
-        if (!$dataConfig) {
-            throw new \Exception('/config/googleBigQueryLogger.ini is not defined, please add config before run project', 1);
-        }
+        $this->_setExcludeEnv($_ENV['EXCLUDE_ENV']);
 
-        if (is_null($dataConfig['dataset'])) {
+        if (is_null($_ENV['DATASET'])) {
             throw new \Exception('Configuration error, for this project. a "dataset" name is required. Add dataset=acme in ini file', 1);
         }
 
-        if (is_null($dataConfig['dataset'])) {
+        if (is_null($_ENV['GOOGLE_CREDENTIALS'])) {
             throw new \Exception('Configuration error, for this project. Give keyfile path for load the credentials. More information : https://cloud.google.com/bigquery/docs/authentication/service-account-file', 1);
         }
 
-        $bigQueryClientConfig = ['keyFilePath' => dirname(__DIR__).$dataConfig['keyFilePath']];
+        $bigQueryClientConfig = ['keyFilePath' => dirname(__DIR__).$_ENV['GOOGLE_CREDENTIALS']];
         $this->_bigQueryClient = new BigQueryClient($bigQueryClientConfig);
 
-        $this->setDataset($dataConfig['dataset']);
+        $this->setDataset($_ENV['DATASET']);
     }
 
     /**
@@ -96,5 +96,20 @@ class BigQueryLogger
     public function getDataset(): ?String
     {
         return $this->_dataset;
+    }
+
+    /**
+     * Set env variable EXCLUDE_ENV with an array containted the environment list to exclude.
+     *
+     * @since 1.0.1
+     * @version 1.0.1
+     * @return string
+     * @param  String $excludeEnv
+     **/
+    private function _setExcludeEnv(string $excludeEnv): array
+    {
+        $excludeEnv = preg_replace('/[[\] ]+/', '', $excludeEnv);
+        $envList = explode(',', $excludeEnv);
+        $_ENV['EXCLUDE_ENV'] = $envList;
     }
 }
