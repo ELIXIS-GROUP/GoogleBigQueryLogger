@@ -19,8 +19,8 @@ use PHPUnit\Framework\TestCase;
  *
  * @method testCredentialsFileIsNotGiven()
  *
- * @since 1.0.1
- * @version 1.0.1
+ * @since 1.1.0
+ * @version 1.1.0
  **/
 class BigQueryLoggerTest extends TestCase
 {
@@ -28,8 +28,8 @@ class BigQueryLoggerTest extends TestCase
      * Test if method "..." retrun a BigQueryClient valide.
      * @todo make test
      *
-     * @since 1.0.1
-     * @version 1.0.1
+     * @since 1.1.0
+     * @version 1.1.0
      **/
     public function testBigQueryClient()
     {
@@ -39,8 +39,8 @@ class BigQueryLoggerTest extends TestCase
      * Throw an exception if credentials file is not given.
      * @todo make test
      *
-     * @since 1.0.1
-     * @version 1.0.1
+     * @since 1.1.0
+     * @version 1.1.0
      **/
     public function testCredentialsFileIsNotGiven()
     {
@@ -50,8 +50,8 @@ class BigQueryLoggerTest extends TestCase
      * Throw an exception if dataset name is not given.
      * @todo make test
      *
-     * @since 1.0.1
-     * @version 1.0.1
+     * @since 1.1.0
+     * @version 1.1.0
      **/
     public function testDatasetNameIsNotGiven()
     {
@@ -60,8 +60,8 @@ class BigQueryLoggerTest extends TestCase
     /**
      * Test if "SetExcludeEnv" method convert a string to array.
      *
-     * @since 1.0.1
-     * @version 1.0.1
+     * @since 1.1.0
+     * @version 1.1.0
      **/
     public function testSetExcludeEnvWithTwoEnv()
     {
@@ -77,8 +77,8 @@ class BigQueryLoggerTest extends TestCase
     /**
      * Test if "SetExcludeEnv" method convert a string to array.
      *
-     * @since 1.0.1
-     * @version 1.0.1
+     * @since 1.1.0
+     * @version 1.1.0
      **/
     public function testSetExcludeEnvWithOnlyOneEnv()
     {
@@ -94,8 +94,8 @@ class BigQueryLoggerTest extends TestCase
      * Test if "SetExcludeEnv" method convert a string to array
      * If string is empty return an empty array.
      *
-     * @since 1.0.1
-     * @version 1.0.1
+     * @since 1.1.0
+     * @version 1.1.0
      **/
     public function testSetExcludeEnvWithEmptyString()
     {
@@ -109,10 +109,10 @@ class BigQueryLoggerTest extends TestCase
     /**
      * Method to acces private method.
      *
-     * @since 1.0.1
-     * @version 1.0.1
+     * @since 1.1.0
+     * @version 1.1.0
      * @param mixed      $instance
-     * @param String     $property
+     * @param string     $property
      * @param mixed|null $arguments
      **/
     private function _invokeMethod($instance, string $property, $arguments = null)

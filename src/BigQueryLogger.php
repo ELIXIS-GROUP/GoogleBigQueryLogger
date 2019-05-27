@@ -24,7 +24,7 @@ use Symfony\Component\Dotenv\Dotenv;
  * @method string         getDataset()
  *
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.1.0
  **/
 class BigQueryLogger
 {
@@ -89,8 +89,8 @@ class BigQueryLogger
     /**
      * List exclude environment in array.
      *
-     * @since 1.0.1
-     * @version 1.0.1
+     * @since 1.1.0
+     * @version 1.1.0
      * @return string
      * @param  string $excludeEnv
      **/
@@ -105,8 +105,8 @@ class BigQueryLogger
     /**
      * Load dotEnv package.
      *
-     * @since 1.0.1
-     * @version 1.0.1
+     * @since 1.1.0
+     * @version 1.1.1
      * @return string
      * @param  string $excludeEnv
      **/
