@@ -41,6 +41,7 @@ $logger->info('With only age');
 - [Configuration Instructions](doc/01-configuration.md)
 - [Usage Instructions](doc/02-usage.md)
 - [Extends class extendsBigQueryLoggerSchema](doc/03-extendsBigQueryLoggerSchema.md)
+- [Developer Guide](doc/04-developer-guide.md)
 
 ## License
 Monolog is licensed under the MIT License
