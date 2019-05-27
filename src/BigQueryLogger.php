@@ -24,7 +24,7 @@ use Symfony\Component\Dotenv\Dotenv;
  * @method string         getDataset()
  *
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.1.0
  **/
 class BigQueryLogger
 {
@@ -40,20 +40,10 @@ class BigQueryLogger
 
     public function __construct()
     {
-        $dotenv = new Dotenv();
-        $dotenv->loadEnv(dirname(__DIR__).'/.env');
-
-        if (is_null($_ENV['DATASET'])) {
-            throw new \Exception('Configuration error, for this project. a "dataset" name is required. Add dataset=acme in ini file', 1);
-        }
-
-        if (is_null($_ENV['GOOGLE_CREDENTIALS'])) {
-            throw new \Exception('Configuration error, for this project. Give keyfile path for load the credentials. More information : https://cloud.google.com/bigquery/docs/authentication/service-account-file', 1);
-        }
+        $this->_loadDotEnv();
 
         $bigQueryClientConfig = ['keyFilePath' => dirname(__DIR__).$_ENV['GOOGLE_CREDENTIALS']];
         $this->_bigQueryClient = new BigQueryClient($bigQueryClientConfig);
-
         $this->setDataset($_ENV['DATASET']);
     }
 
@@ -99,18 +89,44 @@ class BigQueryLogger
     /**
      * List exclude environment in array.
      *
-     * @since 1.0.1
-     * @version 1.0.1
+     * @since 1.1.0
+     * @version 1.1.0
      * @return string
      * @param  string $excludeEnv
      **/
     public function listExcludeEnv(string $excludeEnv): array
     {
         $excludeEnv = preg_replace('/[[\] ]+/', '', $excludeEnv);
-        $envList = ($excludeEnv !== "")? explode(',', $excludeEnv) : [];
+        $envList = ('' !== $excludeEnv) ? explode(',', $excludeEnv) : [];
 
         return $envList;
-
     }
 
+    /**
+     * Load dotEnv package.
+     *
+     * @since 1.1.0
+     * @version 1.1.1
+     * @return string
+     * @param  string $excludeEnv
+     **/
+    private function _loadDotEnv()
+    {
+        if (!isset($_SERVER['APP_ENV']) && !isset($_ENV['APP_ENV'])) {
+            if (!class_exists(Dotenv::class)) {
+                throw new \RuntimeException('APP_ENV environment variable is not defined. You need to define environment variables for configuration or add "symfony/dotenv" as a Composer dependency to load variables from a .env file.');
+            }
+            (new Dotenv())->load(__DIR__.'/../.env');
+        }
+
+        if (!isset($_SERVER['DATASET']) && !isset($_ENV['DATASET']) || empty($_SERVER['DATASET']) && empty($_ENV['DATASET'])) {
+            throw new \Exception('Configuration error, for this project. A "DATASET" name is required, add DATASET=acme from a .env file', 1);
+        }
+
+        if (!isset($_SERVER['GOOGLE_CREDENTIALS']) && !isset($_ENV['GOOGLE_CREDENTIALS']) || empty($_SERVER['GOOGLE_CREDENTIALS']) && empty($_ENV['GOOGLE_CREDENTIALS'])) {
+            throw new \Exception('Configuration error, for this project. Give keyfile path for load the credentials. More information : https://cloud.google.com/bigquery/docs/authentication/service-account-file', 1);
+        }
+
+        $_ENV['APP_ENV'] = $_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? 'dev';
+    }
 }

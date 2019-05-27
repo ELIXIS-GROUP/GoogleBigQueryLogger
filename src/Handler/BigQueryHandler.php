@@ -25,7 +25,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
  * @method __construct()
  *
  * @since 1.0.0
- * @version 1.0.1
+ * @version 1.1.0
  **/
 class BigQueryHandler extends AbstractProcessingHandler
 {
@@ -67,7 +67,7 @@ class BigQueryHandler extends AbstractProcessingHandler
      * @todo try catch for method parse_ini_file
      * @param array $record
      * @since 1.0.0
-     * @version 1.0.1
+     * @version 1.1.0
      **/
     protected function write(array $record): void
     {

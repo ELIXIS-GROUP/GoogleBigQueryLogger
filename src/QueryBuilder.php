@@ -38,7 +38,7 @@ use GoogleBigQueryLogger\Annotation\BigQueryReader as BigQueryReader;
  * @method execute()
  *
  * @since 1.0.0
- * @version 1.0.1
+ * @version 1.1.0
  **/
 class QueryBuilder
 {
@@ -488,7 +488,7 @@ class QueryBuilder
      *
      * @return string
      * @since 1.0.0
-     * @version 1.0.1
+     * @version 1.1.0
      **/
     private function _getSQLForSelect(): string
     {
@@ -516,7 +516,7 @@ class QueryBuilder
      *
      * @return \Google\Cloud\Core\Iterator\ItemIterator
      * @since 1.0.0
-     * @version 1.0.1
+     * @version 1.1.0
      **/
     public function execute()
     {
