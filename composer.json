@@ -19,7 +19,8 @@
         "php": ">=7.1",
         "monolog/monolog": "^1.24",
         "google/cloud-bigquery": "^1.6",
-        "doctrine/orm": "^2.6"
+        "doctrine/orm": "^2.6",
+        "ext-json": "*"
     },
     "autoload": {
         "psr-4": {"GoogleBigQueryLogger\\": "src/"}
