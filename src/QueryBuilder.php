@@ -114,7 +114,7 @@ class QueryBuilder
      * @since 1.0.0
      * @version 1.0.0
      **/
-    public function setReaderEntity(string $classEntity)
+    public function setReaderEntity(string $classEntity): void
     {
         $classEntity = new $classEntity();
 
@@ -126,7 +126,7 @@ class QueryBuilder
      * Either appends to or replaces a single, generic query part.
      *
      * @param  string       $sqlPartName
-     * @param  string       $sqlPart
+     * @param  string|array $sqlPart
      * @param  bool         $append|false
      * @return QueryBuilder
      * @since 1.0.0
@@ -250,19 +250,19 @@ class QueryBuilder
     /**
      * Turns the query being built into a bulk update query that ranges over a certain table.
      *
-     * @param string $select
+     * @param string|null $select
      * @return QueryBuilder
      * @since 1.0.0
      * @version 1.0.0
      */
-    public function select(string $select = null): QueryBuilder
+    public function select(?string $select = null): QueryBuilder
     {
         $this->type = self::SELECT;
 
         if (empty($select)) {
             return $this;
         }
-
+        //FIXME: Impossible to be an array cause this is a string in definition
         $selects = is_array($select) ? $select : func_get_args();
 
         return $this->add('select', $selects);
@@ -322,10 +322,10 @@ class QueryBuilder
                     $value = ('string' != $annotationColumn->type && 'datetime' != $annotationColumn->type) ? $data[$annotationColumn->name] : "'".addslashes($data[$annotationColumn->name])."'";
 
                     if ('datetime' === $annotationColumn->type) {
-                        $value = "'".$data[$annotationColumn->name]->format('Y-m-d H:i:s')."'";
+                        $value = "'{$data[$annotationColumn->name]->format('Y-m-d H:i:s')}'";
                     }
 
-                    if ('' === $data[$annotationColumn->name] || is_null($data[$annotationColumn->name])) {
+                    if ('' === $data[$annotationColumn->name] || $data[$annotationColumn->name] === null) {
                         $value = 'null';
                     }
                 } else {
@@ -455,7 +455,7 @@ class QueryBuilder
      * @since 1.0.0
      * @version 1.0.0
      **/
-    private function _getSQLForUpdate()
+    private function _getSQLForUpdate(): string
     {
         $query = 'UPDATE '.$this->sqlParts['from']['table']
             .' SET '.implode(', ', $this->sqlParts['set'])
@@ -471,7 +471,7 @@ class QueryBuilder
      * @since 1.0.0
      * @version 1.0.0
      **/
-    private function _getSQLForInsert()
+    private function _getSQLForInsert(): string
     {
         $query = 'INSERT INTO '.$this->sqlParts['from']['table']
             .' ( '.implode(', ', $this->_getKeyValues()).' )'
@@ -516,7 +516,7 @@ class QueryBuilder
      * @since 1.0.0
      * @version 1.1.0
      **/
-    public function execute()
+    public function execute(): ?\Google\Cloud\Core\Iterator\ItemIterator
     {
         $this->sqlParts = [
             'select' => [],

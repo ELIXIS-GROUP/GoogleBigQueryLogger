@@ -48,12 +48,15 @@ class BigQueryReader
      * @throws \ReflectionException
      * @since 1.0.0
      */
-    public function tableAnnotation(string $classEntity)
+    public function tableAnnotation(string $classEntity): void
     {
         $reflection = new \ReflectionClass($classEntity);
 
         $classProperty = $this->_reader->getClassAnnotation($reflection, BigQueryTable::class);
-
+        if ($classProperty === null)
+        {
+            //TODO something
+        }
         $this->setAnnotationTable($classProperty);
     }
 
@@ -64,7 +67,7 @@ class BigQueryReader
      * @throws \ReflectionException
      * @since 1.0.0
      */
-    public function columnsAnnotation(string $classEntity)
+    public function columnsAnnotation(string $classEntity): void
     {
         $reflection = new \ReflectionClass($classEntity);
         $annotation = [];

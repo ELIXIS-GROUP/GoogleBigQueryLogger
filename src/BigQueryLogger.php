@@ -62,11 +62,11 @@ class BigQueryLogger
     /**
      * Set a BigQuery dataset name.
      *
+     * @param String|null $dataset
+     * @return string
      * @since 1.0.0
      * @version 1.0.0
-     * @return string
-     * @param  ?String $dataset
-     **/
+     */
     public function setDataset(?String $dataset): ?String
     {
         $this->_dataset = $dataset;

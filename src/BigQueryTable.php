@@ -12,7 +12,8 @@ namespace GoogleBigQueryLogger;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Google\Cloud\BigQuery\BigQueryClient;
-use GoogleBigQueryLogger\Annotation\BigQueryReader as BigQueryReader;
+use GoogleBigQueryLogger\Annotation\BigQueryReader;
+use GoogleBigQueryLogger\Entity\BigQueryLoggerSchema;
 
 /**
  * BigQueryLogger create data table, in a BigQuery dataset.
@@ -66,6 +67,7 @@ class BigQueryTable extends BigQueryLogger
     {
         parent::__construct();
 
+        //FIXME : registerFile deprecated
         AnnotationRegistry::registerFile(dirname(__DIR__).'/src/Annotation/Column.php');
         AnnotationRegistry::registerFile(dirname(__DIR__).'/src/Annotation/Table.php');
 
@@ -78,12 +80,13 @@ class BigQueryTable extends BigQueryLogger
      * Create new table in the BigQuer dataset
      * Schema fields is specify from the entity annotations.
      *
-     * @param string $classEntity|GoogleBigQueryLogger\Entity\BigQueryLoggerSchema
-     * @param bool   $autoCreated|true
+     * @param string $classEntity |GoogleBigQueryLogger\Entity\BigQueryLoggerSchema
+     * @param bool $autoCreated |true
+     * @throws \ReflectionException
      * @since 1.0.0
      * @version 1.0.0
-     **/
-    public function createTable(string $classEntity = 'GoogleBigQueryLogger\Entity\BigQueryLoggerSchema', bool $autoCreated = true)
+     */
+    public function createTable(string $classEntity = BigQueryLoggerSchema::class, bool $autoCreated = true): void
     {
         $fields = [];
         $this->_bigQueryReader->columnsAnnotation(get_class(new $classEntity()));
@@ -94,7 +97,7 @@ class BigQueryTable extends BigQueryLogger
         $columns = $this->_bigQueryReader->getAnnotationColumn();
 
         if (!$this->_tableExist($tableName) && $autoCreated) {
-            if (!is_null($this->getTableSuffix())) {
+            if ($this->getTableSuffix() !== null) {
                 $tableName = $tableName.'_'.$this->getTableSuffix();
             }
 
