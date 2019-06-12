@@ -91,7 +91,7 @@ class BigQueryLogger
      *
      * @since 1.1.0
      * @version 1.1.0
-     * @return string
+     * @return array
      * @param  string $excludeEnv
      **/
     public function listExcludeEnv(string $excludeEnv): array
@@ -105,11 +105,11 @@ class BigQueryLogger
     /**
      * Load dotEnv package.
      *
+     * @return string
+     * @throws \Exception
      * @since 1.1.0
      * @version 1.1.1
-     * @return string
-     * @param  string $excludeEnv
-     **/
+     */
     private function _loadDotEnv()
     {
         if (!isset($_SERVER['APP_ENV']) && !isset($_ENV['APP_ENV'])) {

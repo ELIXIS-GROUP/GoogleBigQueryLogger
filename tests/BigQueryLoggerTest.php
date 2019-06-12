@@ -109,12 +109,14 @@ class BigQueryLoggerTest extends TestCase
     /**
      * Method to acces private method.
      *
-     * @since 1.1.0
-     * @version 1.1.0
-     * @param mixed      $instance
-     * @param string     $property
+     * @param mixed $instance
+     * @param string $property
      * @param mixed|null $arguments
-     **/
+     * @return mixed
+     * @throws \ReflectionException
+     * @version 1.1.0
+     * @since 1.1.0
+     */
     private function _invokeMethod($instance, string $property, $arguments = null)
     {
         $method = new \ReflectionMethod($instance, $property);

@@ -180,11 +180,10 @@ class QueryBuilder
     /**
      * Get query max results.
      *
-     * @param  int $maxResults
      * @return int
      * @since 1.0.0
      * @version 1.0.0
-     **/
+     */
     public function getMaxResults(): ?int
     {
         return $this->_maxResults;
@@ -251,12 +250,11 @@ class QueryBuilder
     /**
      * Turns the query being built into a bulk update query that ranges over a certain table.
      *
-     * @param  string       $datasetTable
-     * @param  string|null  $select
+     * @param string $select
      * @return QueryBuilder
      * @since 1.0.0
      * @version 1.0.0
-     **/
+     */
     public function select(string $select = null): QueryBuilder
     {
         $this->type = self::SELECT;
