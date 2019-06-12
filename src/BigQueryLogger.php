@@ -42,7 +42,7 @@ class BigQueryLogger
     {
         $this->_loadDotEnv();
 
-        $bigQueryClientConfig = ['keyFilePath' => dirname(__DIR__).$_ENV['GOOGLE_CREDENTIALS']];
+        $bigQueryClientConfig = ['keyFilePath' => \dirname(__DIR__).$_ENV['GOOGLE_CREDENTIALS']];
         $this->_bigQueryClient = new BigQueryClient($bigQueryClientConfig);
         $this->setDataset($_ENV['DATASET']);
     }
@@ -110,7 +110,7 @@ class BigQueryLogger
      * @since 1.1.0
      * @version 1.1.1
      */
-    private function _loadDotEnv()
+    private function _loadDotEnv(): ?string
     {
         if (!isset($_SERVER['APP_ENV']) && !isset($_ENV['APP_ENV'])) {
             if (!class_exists(Dotenv::class)) {
@@ -119,11 +119,11 @@ class BigQueryLogger
             (new Dotenv())->load(__DIR__.'/../.env');
         }
 
-        if (!isset($_SERVER['DATASET']) && !isset($_ENV['DATASET']) || empty($_SERVER['DATASET']) && empty($_ENV['DATASET'])) {
+        if ((!isset($_SERVER['DATASET']) && !isset($_ENV['DATASET'])) || (empty($_SERVER['DATASET']) && empty($_ENV['DATASET']))) {
             throw new \Exception('Configuration error, for this project. A "DATASET" name is required, add DATASET=acme from a .env file', 1);
         }
 
-        if (!isset($_SERVER['GOOGLE_CREDENTIALS']) && !isset($_ENV['GOOGLE_CREDENTIALS']) || empty($_SERVER['GOOGLE_CREDENTIALS']) && empty($_ENV['GOOGLE_CREDENTIALS'])) {
+        if ((!isset($_SERVER['GOOGLE_CREDENTIALS']) && !isset($_ENV['GOOGLE_CREDENTIALS'])) || (empty($_SERVER['GOOGLE_CREDENTIALS']) && empty($_ENV['GOOGLE_CREDENTIALS']))) {
             throw new \Exception('Configuration error, for this project. Give keyfile path for load the credentials. More information : https://cloud.google.com/bigquery/docs/authentication/service-account-file', 1);
         }
 
