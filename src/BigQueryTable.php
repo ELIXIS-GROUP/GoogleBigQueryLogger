@@ -106,7 +106,7 @@ class BigQueryTable extends BigQueryLogger
 
                 unset($field->nullable);
 
-                array_push($fields, (array) $field);
+                $fields[] = (array)$field;
             }
 
             $dataset = $this->_bigQueryClient->dataset($this->_bigQueryDataset);
@@ -228,7 +228,7 @@ class BigQueryTable extends BigQueryLogger
         $tablesID = [];
 
         foreach ($tables as $table) {
-            array_push($tablesID, $table->id());
+            $tablesID[] = $table->id();
         }
 
         return $tablesID;

@@ -73,7 +73,7 @@ class BigQueryReader
             $columnProperty = $this->_reader->getPropertyAnnotation($property, BigQueryColumn::class);
 
             if ($columnProperty) {
-                array_push($annotation, $columnProperty);
+                $annotation[] = $columnProperty;
             }
         }
 

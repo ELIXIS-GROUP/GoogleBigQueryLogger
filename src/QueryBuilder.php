@@ -297,7 +297,7 @@ class QueryBuilder
         $columnsName = [];
 
         foreach ($this->_reader->getAnnotationColumn() as $annotationColumn) {
-            array_push($columnsName, $annotationColumn->name);
+            $columnsName[] = $annotationColumn->name;
         }
 
         return $columnsName;
@@ -332,10 +332,10 @@ class QueryBuilder
                     $value = 'null';
                 }
 
-                array_push($row, $value);
+                $row[] = $value;
             }
 
-            array_push($rows, '('.implode(',', $row).')');
+            $rows[] = '(' . implode(',', $row) . ')';
         }
 
         return $this->add('values', $rows);
