@@ -68,7 +68,7 @@ class BigQueryLoggerTest extends TestCase
         $bigQueryLogger = new BigQueryLogger();
         $excludeEnv = $bigQueryLogger->listExcludeEnv('[test, debug]');
 
-        $this->assertInternalType('array', $excludeEnv);
+        $this->assertIsArray($excludeEnv);
         $this->assertEquals(2, count($excludeEnv));
         $this->assertEquals('test', $excludeEnv[0]);
         $this->assertEquals('debug', $excludeEnv[1]);
@@ -85,7 +85,7 @@ class BigQueryLoggerTest extends TestCase
         $bigQueryLogger = new BigQueryLogger();
         $excludeEnv = $bigQueryLogger->listExcludeEnv('[test]');
 
-        $this->assertInternalType('array', $excludeEnv);
+        $this->assertIsArray($excludeEnv);
         $this->assertEquals(1, count($excludeEnv));
         $this->assertEquals('test', $excludeEnv[0]);
     }
@@ -102,7 +102,7 @@ class BigQueryLoggerTest extends TestCase
         $bigQueryLogger = new BigQueryLogger();
         $excludeEnv = $bigQueryLogger->listExcludeEnv('');
 
-        $this->assertInternalType('array', $excludeEnv);
+        $this->assertIsArray($excludeEnv);
         $this->assertEquals(0, count($excludeEnv));
     }
 
