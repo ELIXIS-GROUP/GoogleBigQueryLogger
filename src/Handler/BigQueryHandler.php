@@ -1,9 +1,15 @@
 <?php
 
+/*
+ * This file is part of the GooglBigQueryLogger package.
+ * (c) Elixis Digital <support@elixis.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace GoogleBigQueryLogger\Handler;
 
 use Google\Cloud\BigQuery\BigQueryClient;
-use GoogleBigQueryLogger\Entity;
 use GoogleBigQueryLogger\BigQueryTable;
 use GoogleBigQueryLogger\QueryBuilder;
 use Monolog\Logger;
@@ -12,136 +18,117 @@ use Doctrine\Common\Annotations\AnnotationReader;
 
 /**
  * Extends class Monolog\Handler\AbstractProcessingHandler.
- * @link https://github.com/Seldaek/monolog/blob/master/src/Monolog/Handler/AbstractProcessingHandler.php
+ * @see https://github.com/Seldaek/monolog/blob/master/src/Monolog/Handler/AbstractProcessingHandler.php
  *
  * @author Anthony Papillaud <a.papillaud@elixis.com>
- * @package GoogleBigQueryLogger
  *
  * @method __construct()
  *
  * @since 1.0.0
- * @version 1.0.0
-**/
+ * @version 1.1.0
+ **/
 class BigQueryHandler extends AbstractProcessingHandler
 {
-
     /**
-     * @var String $_classEntityName
-    **/
+     * @var string $_classEntityName
+     **/
     private $_classEntityName;
 
     /**
      * @var QueryBuilder $_bigQueryQueryBuilder
-    **/
+     **/
     private $_bigQueryQueryBuilder;
 
     /**
      * @var BigQueryTable $_bigQueryTable
-    **/
+     **/
     private $_bigQueryTable;
 
     /**
      * BigQueryHandler constructor.
      *
      * @param BigQueryClient $bigQueryClient
-     * @param int $level
-     * @param bool $bubble
+     * @param int            $level
+     * @param bool           $bubble
+     * @param BigQueryTable  $bigQueryTable
      * @since 1.0.0
      * @version 1.0.0
-    **/
+     **/
     public function __construct(BigQueryTable $bigQueryTable, $level = Logger::DEBUG, $bubble = true)
     {
-
         $this->_bigQueryQueryBuilder = new QueryBuilder(new AnnotationReader(), $bigQueryTable->getBigQueryClient());
         $this->_bigQueryTable = $bigQueryTable;
 
         parent::__construct($level, $bubble);
-
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      * @todo try catch for method parse_ini_file
      * @param array $record
      * @since 1.0.0
-     * @version 1.0.0
-    **/
+     * @version 1.1.0
+     **/
     protected function write(array $record): void
     {
-
-        $dataConfig = parse_ini_file(dirname(dirname(__DIR__)) . "/config/googleBigQueryLogger.ini");
-
-        if( !$dataConfig ){
-            throw new \Exception("/config/googleBigQueryLogger.ini is not defined, please add config before run project", 1);
-        }
-
-        $classEntity  = $this->_bigQueryTable->getEntity();
+        $classEntity = $this->_bigQueryTable->getEntity();
         $loggerEntity = new $classEntity();
 
-        $loggerEntity->setMessage($record["message"]);
-        $loggerEntity->setLevel($record["level"]);
-        $loggerEntity->setLevelName($record["level_name"]);
-        $loggerEntity->setChannel($record["channel"]);
-        $loggerEntity->setDatetime($record["datetime"]);
+        $loggerEntity->setMessage($record['message']);
+        $loggerEntity->setLevel($record['level']);
+        $loggerEntity->setLevelName($record['level_name']);
+        $loggerEntity->setChannel($record['channel']);
+        $loggerEntity->setDatetime($record['datetime']);
 
-        $formatedContent = $this->_formattedContext($record["context"], $loggerEntity);
+        $formatedContent = $this->_formattedContext($record['context'], $loggerEntity);
 
-        $record["context"] = $formatedContent["recordContext"];
-        $loggerEntity      = $formatedContent["loggerEntity"];
+        $record['context'] = $formatedContent['recordContext'];
+        $loggerEntity = $formatedContent['loggerEntity'];
 
-        if( !in_array($dataConfig["environment"], $dataConfig["exclude_environment"]) ){
+        $excludeEnv = $this->_bigQueryTable->listExcludeEnv($_ENV['EXCLUDE_ENV']);
 
+        if (!in_array($_ENV['APP_ENV'], $excludeEnv)) {
             $this->_bigQueryQueryBuilder->setReaderEntity($classEntity);
             $this->_bigQueryQueryBuilder->insert($this->_bigQueryTable->getDatasetTable())
-                                        ->values([(array)$loggerEntity])
+                                        ->values([(array) $loggerEntity])
                                         ->getQuery()
                                         ->execute();
         }
 
-        if( $dataConfig["show_results"] == true || in_array($dataConfig["environment"], $dataConfig["exclude_environment"]) ){
-
-            $lines = preg_split('{[\r\n]+}', rtrim( (string) $record['formatted'] ));
+        if (true == $_ENV['SHOW_RESULTS'] || in_array($_ENV['APP_ENV'], $excludeEnv)) {
+            $lines = preg_split('{[\r\n]+}', rtrim((string) $record['formatted']));
             foreach ($lines as $line) {
                 error_log($line, 4);
             }
-
         }
-
     }
 
     /**
      * Formatted record context before save data.
      *
-     * @param array $recordContext
-     * @param void $loggerEntity
+     * @param  array $recordContext
+     * @param  void  $loggerEntity
      * @return array
      * @since 1.0.0
      * @version 1.0.0
-    **/
-    private function _formattedContext(Array $recordContext, $loggerEntity): Array
+     **/
+    private function _formattedContext(array $recordContext, $loggerEntity): array
     {
+        if (isset($recordContext)) {
+            foreach ($recordContext as $setterKey => $setterValue) {
+                $setterMethod = 'set'.ucfirst($setterKey);
 
-        if( isset($recordContext) ){
-
-            foreach($recordContext as $setterKey => $setterValue){
-
-                $setterMethod = "set". ucfirst($setterKey);
-
-                if( method_exists($loggerEntity, $setterMethod) ){
-                    $loggerEntity->{"set". ucfirst($setterKey)}($setterValue);
+                if (method_exists($loggerEntity, $setterMethod)) {
+                    $loggerEntity->{'set'.ucfirst($setterKey)}($setterValue);
                     unset($recordContext[$setterKey]);
                 }
-
             }
 
-            if( !empty($recordContext) ){
+            if (!empty($recordContext)) {
                 $loggerEntity->setContext(json_encode($recordContext));
             }
-
         }
 
-        return ["loggerEntity" => $loggerEntity, "recordContext" => $recordContext];
-
+        return ['loggerEntity' => $loggerEntity, 'recordContext' => $recordContext];
     }
-
 }

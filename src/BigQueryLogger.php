@@ -1,95 +1,132 @@
 <?php
 
+/*
+ * This file is part of the GooglBigQueryLogger package.
+ * (c) Elixis Digital <support@elixis.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace GoogleBigQueryLogger;
 
 use Google\Cloud\BigQuery\BigQueryClient;
+use Symfony\Component\Dotenv\Dotenv;
 
 /**
- * Initialize and use BigQuery API to create a new BigQuery Client
- * @link https://cloud.google.com/bigquery/docs/quickstarts/quickstart-client-libraries BigQuery documentation : Quickstart: Using Client Libraries.
+ * Initialize and use BigQuery API to create a new BigQuery Client.
+ * @see https://cloud.google.com/bigquery/docs/quickstarts/quickstart-client-libraries BigQuery documentation : Quickstart: Using Client Libraries.
  *
  * @author Anthony Papillaud <a.papillaud@elixis.com>
- * @package GoogleBigQueryLogger
  *
- * @method __construct()
+ * @method                __construct()
  * @method BigQueryClient getBigQueryClient()
- * @method String setDataset()
- * @method String getDataset()
+ * @method string         setDataset()
+ * @method string         getDataset()
  *
  * @since 1.0.0
- * @version 1.0.0
-**/
+ * @version 1.1.0
+ **/
 class BigQueryLogger
 {
+    /**
+     * @var BigQueryClient $_bigQueryClient
+     **/
+    private $_bigQueryClient;
 
-	/**
-	 * @var BigQueryClient $_bigQueryClient
-	**/
-	private $_bigQueryClient;
+    /**
+     * @var string $_dataset
+     **/
+    private $_dataset;
 
-	/**
-	 * @var String $_dataset
-	**/
-	private $_dataset;
+    public function __construct()
+    {
+        $this->_loadDotEnv();
 
-	public function __construct()
-	{
+        $bigQueryClientConfig = ['keyFilePath' => dirname(__DIR__).$_ENV['GOOGLE_CREDENTIALS']];
+        $this->_bigQueryClient = new BigQueryClient($bigQueryClientConfig);
+        $this->setDataset($_ENV['DATASET']);
+    }
 
-		$dataConfig = parse_ini_file(dirname(__DIR__) . "/config/googleBigQueryLogger.ini");
+    /**
+     * Get a BigQuery Client.
+     *
+     * @since 1.0.0
+     * @version 1.0.0
+     * @return BigQueryClient
+     **/
+    public function getBigQueryClient(): BigQueryClient
+    {
+        return $this->_bigQueryClient;
+    }
 
-		if( !$dataConfig ){
-			throw new \Exception("/config/googleBigQueryLogger.ini is not defined, please add config before run project", 1);
-		}
+    /**
+     * Set a BigQuery dataset name.
+     *
+     * @since 1.0.0
+     * @version 1.0.0
+     * @return string
+     * @param  ?String $dataset
+     **/
+    public function setDataset(?String $dataset): ?String
+    {
+        $this->_dataset = $dataset;
 
-		if( is_null($dataConfig["dataset"]) ){
-			throw new \Exception("Configuration error, for this project. a \"dataset\" name is required. Add dataset=acme in ini file", 1);
-		}
+        return $this->_dataset;
+    }
 
-		if( is_null($dataConfig["dataset"]) ){
-			throw new \Exception("Configuration error, for this project. Give keyfile path for load the credentials. More information : https://cloud.google.com/bigquery/docs/authentication/service-account-file", 1);
-		}
+    /**
+     * Get a BigQuery dataset name.
+     *
+     * @since 1.0.0
+     * @version 1.0.0
+     * @return string
+     **/
+    public function getDataset(): ?String
+    {
+        return $this->_dataset;
+    }
 
-		$bigQueryClientConfig = ["keyFilePath" =>  dirname(__DIR__) . $dataConfig["keyFilePath"]];
-		$this->_bigQueryClient = new BigQueryClient($bigQueryClientConfig);
+    /**
+     * List exclude environment in array.
+     *
+     * @since 1.1.0
+     * @version 1.1.0
+     * @return string
+     * @param  string $excludeEnv
+     **/
+    public function listExcludeEnv(string $excludeEnv): array
+    {
+        $excludeEnv = preg_replace('/[[\] ]+/', '', $excludeEnv);
+        $envList = ('' !== $excludeEnv) ? explode(',', $excludeEnv) : [];
 
-		$this->setDataset($dataConfig["dataset"]);
+        return $envList;
+    }
 
-	}
+    /**
+     * Load dotEnv package.
+     *
+     * @since 1.1.0
+     * @version 1.1.1
+     * @return string
+     * @param  string $excludeEnv
+     **/
+    private function _loadDotEnv()
+    {
+        if (!isset($_SERVER['APP_ENV']) && !isset($_ENV['APP_ENV'])) {
+            if (!class_exists(Dotenv::class)) {
+                throw new \RuntimeException('APP_ENV environment variable is not defined. You need to define environment variables for configuration or add "symfony/dotenv" as a Composer dependency to load variables from a .env file.');
+            }
+            (new Dotenv())->load(__DIR__.'/../.env');
+        }
 
-	/**
-	 * Get a BigQuery Client
-	 *
-	 * @since 1.0.0
-	 * @version 1.0.0
-	 * @return BigQueryClient
-	**/
-	public function getBigQueryClient(): BigQueryClient
-	{
-		return $this->_bigQueryClient;
-	}
+        if (!isset($_SERVER['DATASET']) && !isset($_ENV['DATASET']) || empty($_SERVER['DATASET']) && empty($_ENV['DATASET'])) {
+            throw new \Exception('Configuration error, for this project. A "DATASET" name is required, add DATASET=acme from a .env file', 1);
+        }
 
-	/**
-	 * Set a BigQuery dataset name
-	 *
-	 * @since 1.0.0
-	 * @version 1.0.0
-	 * @return String
-	**/
-	public function setDataset(?String $dataset): ?String
-	{
-		$this->_dataset = $dataset;
-		return $this->_dataset;
-	}
+        if (!isset($_SERVER['GOOGLE_CREDENTIALS']) && !isset($_ENV['GOOGLE_CREDENTIALS']) || empty($_SERVER['GOOGLE_CREDENTIALS']) && empty($_ENV['GOOGLE_CREDENTIALS'])) {
+            throw new \Exception('Configuration error, for this project. Give keyfile path for load the credentials. More information : https://cloud.google.com/bigquery/docs/authentication/service-account-file', 1);
+        }
 
-	/**
-	 * Get a BigQuery dataset name
-	 *
-	 * @since 1.0.0
-	 * @version 1.0.0
-	 * @return String
-	**/
-	public function getDataset(): ?String
-	{
-		return $this->_dataset;
-	}
+        $_ENV['APP_ENV'] = $_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? 'dev';
+    }
 }
