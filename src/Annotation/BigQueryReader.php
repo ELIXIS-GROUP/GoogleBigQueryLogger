@@ -55,7 +55,7 @@ class BigQueryReader
         $classProperty = $this->_reader->getClassAnnotation($reflection, BigQueryTable::class);
         if ($classProperty === null)
         {
-            //TODO something
+            // TODO something
         }
         $this->setAnnotationTable($classProperty);
     }

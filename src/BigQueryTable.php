@@ -67,7 +67,7 @@ class BigQueryTable extends BigQueryLogger
     {
         parent::__construct();
 
-        //FIXME : registerFile deprecated
+        // FIXME : registerFile deprecated
         AnnotationRegistry::registerFile(dirname(__DIR__).'/src/Annotation/Column.php');
         AnnotationRegistry::registerFile(dirname(__DIR__).'/src/Annotation/Table.php');
 

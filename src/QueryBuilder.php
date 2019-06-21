@@ -262,7 +262,7 @@ class QueryBuilder
         if (empty($select)) {
             return $this;
         }
-        //FIXME: Impossible to be an array cause this is a string in definition
+        // FIXME: Impossible to be an array cause this is a string in definition
         $selects = is_array($select) ? $select : func_get_args();
 
         return $this->add('select', $selects);
@@ -482,7 +482,7 @@ class QueryBuilder
 
     /**
      * Converts this instance into an SELECT string in SQL.
-     * @todo try and debug script - Line 501 - if ($this->_isLimitQuery()) {}
+     * TODO try and debug script - Line 501 - if ($this->_isLimitQuery()) {}
      *
      * @return string
      * @since 1.0.0
