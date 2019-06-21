@@ -105,12 +105,11 @@ class BigQueryLogger
     /**
      * Load dotEnv package.
      *
-     * @return string
      * @throws \Exception
      * @since 1.1.0
      * @version 1.1.1
      */
-    private function _loadDotEnv(): ?string
+    private function _loadDotEnv()
     {
         if (!isset($_SERVER['APP_ENV']) && !isset($_ENV['APP_ENV'])) {
             if (!class_exists(Dotenv::class)) {
