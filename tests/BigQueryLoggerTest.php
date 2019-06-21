@@ -26,7 +26,7 @@ class BigQueryLoggerTest extends TestCase
 {
     /**
      * Test if method "..." retrun a BigQueryClient valide.
-     * @todo make test
+     * TODO make test
      *
      * @since 1.1.0
      * @version 1.1.0
@@ -37,7 +37,7 @@ class BigQueryLoggerTest extends TestCase
 
     /**
      * Throw an exception if credentials file is not given.
-     * @todo make test
+     * TODO make test
      *
      * @since 1.1.0
      * @version 1.1.0
@@ -48,7 +48,7 @@ class BigQueryLoggerTest extends TestCase
 
     /**
      * Throw an exception if dataset name is not given.
-     * @todo make test
+     * TODO make test
      *
      * @since 1.1.0
      * @version 1.1.0
@@ -68,7 +68,7 @@ class BigQueryLoggerTest extends TestCase
         $bigQueryLogger = new BigQueryLogger();
         $excludeEnv = $bigQueryLogger->listExcludeEnv('[test, debug]');
 
-        $this->assertInternalType('array', $excludeEnv);
+        $this->assertIsArray($excludeEnv);
         $this->assertEquals(2, count($excludeEnv));
         $this->assertEquals('test', $excludeEnv[0]);
         $this->assertEquals('debug', $excludeEnv[1]);
@@ -85,7 +85,7 @@ class BigQueryLoggerTest extends TestCase
         $bigQueryLogger = new BigQueryLogger();
         $excludeEnv = $bigQueryLogger->listExcludeEnv('[test]');
 
-        $this->assertInternalType('array', $excludeEnv);
+        $this->assertIsArray($excludeEnv);
         $this->assertEquals(1, count($excludeEnv));
         $this->assertEquals('test', $excludeEnv[0]);
     }
@@ -102,19 +102,21 @@ class BigQueryLoggerTest extends TestCase
         $bigQueryLogger = new BigQueryLogger();
         $excludeEnv = $bigQueryLogger->listExcludeEnv('');
 
-        $this->assertInternalType('array', $excludeEnv);
+        $this->assertIsArray($excludeEnv);
         $this->assertEquals(0, count($excludeEnv));
     }
 
     /**
      * Method to acces private method.
      *
-     * @since 1.1.0
-     * @version 1.1.0
-     * @param mixed      $instance
-     * @param string     $property
+     * @param mixed $instance
+     * @param string $property
      * @param mixed|null $arguments
-     **/
+     * @return mixed
+     * @throws \ReflectionException
+     * @version 1.1.0
+     * @since 1.1.0
+     */
     private function _invokeMethod($instance, string $property, $arguments = null)
     {
         $method = new \ReflectionMethod($instance, $property);

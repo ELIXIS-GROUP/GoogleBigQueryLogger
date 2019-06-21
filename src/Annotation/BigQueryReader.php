@@ -14,7 +14,7 @@ use GoogleBigQueryLogger\Annotation\Column as BigQueryColumn;
 use GoogleBigQueryLogger\Annotation\Table as BigQueryTable;
 
 /**
- * BigQuery Reader annoation, use Doctrine annotation for read annotation in entity file.
+ * BigQuery Reader annotation, use Doctrine annotation for read annotation in entity file.
  *
  * @author Anthony Papillaud <a.papillaud@elixis.com>
  * @version 1.0.0
@@ -27,12 +27,12 @@ class BigQueryReader
     private $_reader;
 
     /**
-     * @var string $_annotationTable
+     * @var BigQueryTable $_annotationTable
      **/
     private $_annotationTable;
 
     /**
-     * @var string *_annotationColumn
+     * @var array $_annotationColumn
      **/
     private $_annotationColumn;
 
@@ -44,25 +44,30 @@ class BigQueryReader
     /**
      * Read annotation "BigQuery\Table".
      *
-     * @param $classEntity (string)
+     * @param string $classEntity
+     * @throws \ReflectionException
      * @since 1.0.0
-     **/
-    public function tableAnnotation(string $classEntity)
+     */
+    public function tableAnnotation(string $classEntity): void
     {
         $reflection = new \ReflectionClass($classEntity);
 
         $classProperty = $this->_reader->getClassAnnotation($reflection, BigQueryTable::class);
-
+        if ($classProperty === null)
+        {
+            // TODO something
+        }
         $this->setAnnotationTable($classProperty);
     }
 
     /**
      * Read annotation "BigQuery\Columns".
      *
-     * @param $classEntity (string)
+     * @param string $classEntity
+     * @throws \ReflectionException
      * @since 1.0.0
-     **/
-    public function columnsAnnotation(string $classEntity)
+     */
+    public function columnsAnnotation(string $classEntity): void
     {
         $reflection = new \ReflectionClass($classEntity);
         $annotation = [];
@@ -71,7 +76,7 @@ class BigQueryReader
             $columnProperty = $this->_reader->getPropertyAnnotation($property, BigQueryColumn::class);
 
             if ($columnProperty) {
-                array_push($annotation, $columnProperty);
+                $annotation[] = $columnProperty;
             }
         }
 
@@ -81,7 +86,7 @@ class BigQueryReader
     /**
      * Set annotation "BigQuery\Table".
      *
-     * @param $annotationTable (BigQueryTable)
+     * @param BigQueryTable $annotationTable (BigQueryTable)
      * @return BigQueryTable
      * @since 1.0.0
      **/
